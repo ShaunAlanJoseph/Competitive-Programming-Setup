@@ -5,7 +5,6 @@ set number relativenumber showcmd cursorline " Visual
 
 " Constants
 let mapleader = " "
-let config_path = expand("~/.config/vim/")
 " use shellescape() // fnameescape() if req to escape special chars
 
 " Maps
@@ -27,9 +26,6 @@ nnoremap <leader>h :bprev<CR>
 nnoremap <leader>l :bnext<CR>
 
 " Clipboard
-let clipboard_path = config_path . "clip/.clip"
-let clip_script_path = config_path . "clip/copy_to_clipboard.sh"
-
 function! GetBufData()
 	return join(getline(1, '$'), "\n")
 endfunction
@@ -39,12 +35,12 @@ function! GetFilePath()
 endfunction
 
 function! CopyToClipboard(data)
-	call writefile(split(a:data, "\n"), g:clipboard_path)
-	execute "!" . g:clip_script_path
+	call system("wl-copy", a:data)
+	echohl WildMenu | echo "Copied to Clipboard!" | echohl None
 endfunction
 
 nnoremap <C-M-y> :call CopyToClipboard(GetBufData())<CR><CR>
-vnoremap <C-M-y> :call CopyToClipboard(@@)<CR><CR>
+vnoremap <C-M-y> "yy:call CopyToClipboard(getreg('"'))<CR><CR>
 map <C-M-f> :call CopyToClipboard(GetFilePath())<CR><CR>
 
 " Snippets
