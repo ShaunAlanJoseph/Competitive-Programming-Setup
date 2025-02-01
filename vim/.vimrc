@@ -25,30 +25,6 @@ nnoremap <C-k> <C-w>k
 nnoremap <leader>h :bprev<CR>
 nnoremap <leader>l :bnext<CR>
 
-" Clipboard
-function! GetBufData()
-	return join(getline(1, '$'), "\n")
-endfunction
-
-function! GetFilePath()
-	return expand("%:p")
-endfunction
-
-function! CopyToClipboard(data)
-	call system("wl-copy", a:data)
-	echohl WildMenu | echo "Copied to Clipboard!" | echohl None
-endfunction
-
-nnoremap <C-M-y> :call CopyToClipboard(GetBufData())<CR><CR>
-vnoremap <C-M-y> "yy:call CopyToClipboard(getreg('"'))<CR><CR>
-map <C-M-f> :call CopyToClipboard(GetFilePath())<CR><CR>
-
-" Snippets
-let snip_path = expand("~/cp/snippets/")
-
-inoremap {<CR> {<CR>}<Esc>O
-nnoremap +<Tab> :r <C-R>=snip_path<CR>
-
 " Input / Output
 let input_file = expand("%:p:h") . "/.input"
 let output_file = expand("%:p:h") . "/.output"
@@ -73,8 +49,8 @@ endfunction
 
 command! IO call OpenIOFiles()
 
-noremap <C-M-1> <Esc>:call ClearInput()<CR>
-inoremap <C-M-1> <Esc>:call ClearInput()<CR>
+noremap <C-1> <Esc>:call ClearInput()<CR>
+inoremap <C-1> <Esc>:call ClearInput()<CR>
 
 " Competitive Programming Setup
 function! CPSetup()
@@ -83,8 +59,14 @@ function! CPSetup()
 	call feedkeys("13ji\t")
 endfunction
 
-noremap <C-M-s> <Esc>:call CPSetup()<CR>
-inoremap <C-M-s> <Esc>:call CPSetup()<CR>
+nnoremap cp<Tab> :call CPSetup()<CR>
+nnoremap cpio<Tab> :IO<CR>:call CPSetup()<CR>
+
+" Snippets
+let snip_path = expand("~/cp/snippets/")
+
+inoremap {<CR> {<CR>}<Esc>O
+nnoremap +<Tab> :r <C-R>=snip_path<CR>
 
 " Build
 let compiled_file = expand("%:p:h") . "/a.out"
@@ -144,8 +126,39 @@ function! BuildAndRunWithTermIO()
 	execute "terminal " . g:compiled_file
 endfunction
 
-noremap <C-M-r> <Esc>:call BuildAndRunWithFileIO()<CR>
-inoremap <C-M-r> <Esc>:call BuildAndRunWithFileIO()<CR>
+noremap <C-4> <Esc>:call BuildAndRunWithFileIO()<CR>
+inoremap <C-4> <Esc>:call BuildAndRunWithFileIO()<CR>
 
-noremap <C-M-t> <Esc>:call BuildAndRunWithTermIO()<CR>
-inoremap <C-M-t> <Esc>:call BuildAndRunWithTermIO()<CR>o
+noremap <C-5> <Esc>:call BuildAndRunWithTermIO()<CR>
+inoremap <C-5> <Esc>:call BuildAndRunWithTermIO()<CR>
+
+" Clipboard
+function! GetBufData()
+	return join(getline(1, '$'), "\n")
+endfunction
+
+function! GetFilePath()
+	return expand("%:p")
+endfunction
+
+function! CopyToClipboard(data)
+	call system("wl-copy", a:data)
+	echohl WildMenu | echo "Copied to Clipboard!" | echohl None
+endfunction
+
+function! PasteToInput()
+	call OpenIOFiles()
+	call system("wl-paste > " . g:input_file)
+	echohl WildMenu | echo "Pasted from Clipboard!" | echohl None
+	silent checktime
+endfunction
+
+nnoremap <C-M-y> :call CopyToClipboard(GetBufData())<CR><CR>
+inoremap <C-M-y> <Esc>:call CopyToClipboard(GetBufData())<CR><CR>
+vnoremap <C-M-y> "yy:call CopyToClipboard(getreg('"'))<CR><CR>
+
+nnoremap <C-M-f> :call CopyToClipboard(GetFilePath())<CR><CR>
+inoremap <C-M-f> <Esc>:call CopyToClipboard(GetFilePath())<CR><CR>
+
+nnoremap <C-M-v> :call PasteToInput()<CR>
+inoremap <C-M-v> <Esc>:call PasteToInput()<CR>
