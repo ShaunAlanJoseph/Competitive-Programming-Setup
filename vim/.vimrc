@@ -49,14 +49,14 @@ endfunction
 
 command! IO call OpenIOFiles()
 
-noremap <C-1> <Esc>:call ClearInput()<CR>
-inoremap <C-1> <Esc>:call ClearInput()<CR>
+noremap <A-1> <Esc>:call ClearInput()<CR>
+inoremap <A-1> <Esc>:call ClearInput()<CR>
 
 " Competitive Programming Setup
 function! CPSetup()
 	%delete
 	execute "0read " . g:snip_path . "cp.cpp"
-	call feedkeys("13ji\t")
+	call feedkeys("15ji\t")
 endfunction
 
 nnoremap cp<Tab> :call CPSetup()<CR>
@@ -126,11 +126,11 @@ function! BuildAndRunWithTermIO()
 	execute "terminal " . g:compiled_file
 endfunction
 
-noremap <C-4> <Esc>:call BuildAndRunWithFileIO()<CR>
-inoremap <C-4> <Esc>:call BuildAndRunWithFileIO()<CR>
+noremap <A-r> <Esc>:call BuildAndRunWithFileIO()<CR>
+inoremap <A-r> <Esc>:call BuildAndRunWithFileIO()<CR>
 
-noremap <C-5> <Esc>:call BuildAndRunWithTermIO()<CR>
-inoremap <C-5> <Esc>:call BuildAndRunWithTermIO()<CR>
+noremap <A-t> <Esc>:call BuildAndRunWithTermIO()<CR>
+inoremap <A-t> <Esc>:call BuildAndRunWithTermIO()<CR>
 
 " Clipboard
 function! GetBufData()
@@ -153,12 +153,25 @@ function! PasteToInput()
 	silent checktime
 endfunction
 
-nnoremap <C-M-y> :call CopyToClipboard(GetBufData())<CR><CR>
-inoremap <C-M-y> <Esc>:call CopyToClipboard(GetBufData())<CR><CR>
-vnoremap <C-M-y> "yy:call CopyToClipboard(getreg('"'))<CR><CR>
+nnoremap <A-y> :call CopyToClipboard(GetBufData())<CR><CR>
+inoremap <A-y> <Esc>:call CopyToClipboard(GetBufData())<CR><CR>
+vnoremap <A-y> "yy:call CopyToClipboard(getreg('"'))<CR><CR>
 
-nnoremap <C-M-f> :call CopyToClipboard(GetFilePath())<CR><CR>
-inoremap <C-M-f> <Esc>:call CopyToClipboard(GetFilePath())<CR><CR>
+nnoremap <A-f> :call CopyToClipboard(GetFilePath())<CR><CR>
+inoremap <A-f> <Esc>:call CopyToClipboard(GetFilePath())<CR><CR>
 
-nnoremap <C-M-v> :call PasteToInput()<CR>
-inoremap <C-M-v> <Esc>:call PasteToInput()<CR>
+nnoremap <A-v> :call PasteToInput()<CR>
+inoremap <A-v> <Esc>:call PasteToInput()<CR>
+
+" Gnome Terminal Compatibility
+"" Alt + AlphaNum 
+let c = '0'
+while c <= 'z'
+	exec "set <A-" . c . ">=\e" . c
+	exec "imap \e" . c . " <A-" . c . ">"
+	if c == '9'
+		let c = 'a'
+	else
+		let c = nr2char(char2nr(c) + 1)
+	endif
+endw
